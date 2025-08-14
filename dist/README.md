@@ -1,8 +1,8 @@
-# MathJax Arabic Extension for v4
+# MathJax Arabic Extension
+This is an extension to MathJax (v2.5+), that provides basic Arabic support to MathJax.
 
-This is an extension for MathJax (v4+), that provides basic Arabic support to MathJax.
-
-The extension so far only supports TeX input.
+The extension so far only supports TeX input with HTML-CSS output. However, support to other input and output
+jaxes is possible.
 
 ## Key Features
 It provides the following:
@@ -11,48 +11,60 @@ It provides the following:
   - Translate commonly used identifiers and functions.
 
 ## How to Use the Extension
+### Install the Extension
+First you'd like to [install](http://mathjax.readthedocs.org/en/latest/installation.html)
+and [configure](http://mathjax.readthedocs.org/en/latest/configuration.html) MathJax in your page.
 
-### Configuration
+Then you'll need to include the `arabic.js` as an extension, here's an example configuration:
 
-Here's an example configuration:
+    MathJax.Ajax.config.path["arabic"] = "https://cdn.rawgit.com/OmarIthawi/arabic-mathjax/v1.2/dist";
 
-```javascript
-window.MathJax = {
-  loader: {
-    load: ['[custom]/arabic.js'],
-    paths: {custom: 'https://your-path-to/dist'}
-  },
-  tex: {
-    packages: {'[+]': ['arabic-extension']}
-  }
-};
-```
+    MathJax.Hub.Config({
+        extensions: [
+            "[arabic]/arabic.js"
+        ]
+    });
 
-You'll need to replace `https://your-path-to/dist` with the actual path to the `dist` directory of this extension.
+
+### The Amiri Font
+The extension relies (sort of) on the
+[Amiri font](https://www.google.com/fonts#UsePlace:use/Collection:Amiri)
+to render beautifully (kinda).
+
+One way to include the font is to add the following CSS from Google Fonts:
+
+    <link href='https://fonts.googleapis.com/css?family=Amiri' rel='stylesheet' type='text/css'>
+
+
+Also you'd like to set the font as the undefined family. Because of a bug in MathJax, you should stick with a single
+font-family e.g. use `Amiri` or `serif` but not `Amiri, serif`.
+
+    MathJax.Hub.Config({
+        'HTML-CSS': {
+            undefinedFamily: 'Amiri'
+        }
+    });
 
 ### Typeset an Arabic Equation
 The extension provides the following additional TeX commands to be typeset an Arabic equation:
 
-1. **`\auto`**
+1. **`\alwaysar`**
 
-   `\auto{EQUATION}` Automatically detects the language of the equation and translates it to the other language. If the equation is mostly Arabic, it will be translated to English, and vice versa.
+   `\alwaysar{EQUATION}` A macro to translate and RTL'ize an `EQUATION`,  where `EQUATION` can be anything from
+   `x = 1` to `e^x=\lim_{n\to\infty}`.
+
+   Wrap any TeX equation with it, and it *should* just work.
 
 2. **`\ar`**
 
-   `\ar{EQUATION}` A macro to translate and RTL'ize an `EQUATION`,  where `EQUATION` can be anything from
-   `x = 1` to `e^x=\lim_{n\to\infty}`.
+   `\ar{EQUATION}` (**Recommended**) A similar macro to `\alwaysar{EQUATION}`, but it only translate and RTL'ize the equation if  the page is Arabic.
 
-3. **`\en`**
+   Bellow is an example equation:
 
-    `\en{EQUATION}` Translates an Arabic equation to English.
+       \ar{x=1}
 
-4. **`\trans`**
-
-   `\trans{TEXT}` Translates the given text to Arabic.
-
-5. **`\transn`**
-
-    `\transn{NUMBER}` Translates a number to Arabic, including decimal points.
+   The above would render **x=1** beautifully in an English page, while it should render **س=١** in an Arabic page
+   even more beautifully ( in my opinion :) ).
 
 ## Supported Features
  - Flip everything (almost) including:
@@ -64,7 +76,7 @@ The extension provides the following additional TeX commands to be typeset an Ar
 
  - Translate the basic math functions:
      * `\sin` --> `جا`
-     * `\cos` --> `جتا`
+     * `\cos` --> `تا`
      * `\tan` --> `ظا`
      * `\cot` --> `ظتا`
      * `\sec` --> `قا`
@@ -72,7 +84,10 @@ The extension provides the following additional TeX commands to be typeset an Ar
      * `\log` --> `لو`
 
 
- - Translate `\lim` into `نهــا`.
+ - Translate `\lim` into `نها`, Although some would prefer `غــا`, but that's just
+   a preference, may someone can patch it to support `ar_IQ` for the Iraqi people!
+
+ - Render the Arabic numbers (١, ٢, ٣) instead of (1, 2, 3), which is awesome!
 
  - The following new commands:
      * **Circle radius:** `\radius` Translates to `r` and `نق`
@@ -82,7 +97,6 @@ The extension provides the following additional TeX commands to be typeset an Ar
      * **Charge Sheen Character:** `\charge` Renders the 
       [`ڛ` (Unicode U+069B)](https://www.compart.com/en/unicode/U+069B) 
        character in Arabic while printing `C` in English.
-
        
        This sheen character is then replaced by a more appropriate Ruqa (رقعة) character, when using
        the [modified Amiri font](https://github.com/OmarIthawi/amiri/releases).

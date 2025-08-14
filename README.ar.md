@@ -14,23 +14,28 @@
 
 ### التهيئة والإعداد
 
-لتفعيل الإضافة، يجب أولاً إعداد MathJax v4 في صفحتك ثم إضافة مسار الإضافة وحزمة `arabic-extension` إلى الإعدادات.
+لتفعيل الإضافة، يجب أولاً إعداد MathJax v4 في صفحتك ثم إضافة مسار الإضافة وحزمة `arabic-extension` إلى الإعدادات. هذا الإعداد سيفعل الإضافة لكل من مدخلات TeX و MathML و AsciiMath.
 
 ```javascript
 window.MathJax = {
   loader: {
     // استبدل المسار التالي بالمسار الصحيح لملف arabic.js على خادمك
-    load: ['[custom]/arabic.js'],
+    load: ['[custom]/arabic.js', 'input/tex', 'input/mathml', 'input/asciimath', 'output/chtml', 'ui/menu'],
     paths: {custom: 'https://your-path-to/dist'}
   },
   tex: {
-    // تفعيل الحزمة
+    // تفعيل الحزمة لمدخلات TeX
     packages: {'[+]': ['arabic-extension']}
+  },
+  options: {
+    arabic: {
+      autoLTR: true // تفعيل الاكتشاف التلقائي لاتجاه الصفحة
+    }
   }
 };
 ```
 
-تأكد من استبدال `https://your-path-to/dist` بالمسار الفعلي الذي يوجد به ملف `dist/arabic.js`.
+تأكد من استبدال `https://your-path-to/dist` بالمسار الفعلي الذي يوجد به ملف `dist/arabic.js`. سيقوم الـ `post-filter` بتطبيق الترجمة العربية والعرض من اليمين لليسار تلقائيًا على جميع تنسيقات الإدخال المدعومة.
 
 ### كتابة المعادلات العربية
 

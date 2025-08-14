@@ -1,0 +1,93 @@
+:root {
+    --border-color: #e0e0e0;
+    --background-color: #f9f9f9;
+    --header-color: #4a4a4a;
+    --text-color: #333;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #fff;
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+header {
+    background-color: var(--background-color);
+    border-bottom: 1px solid var(--border-color);
+    padding: 2rem;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+    color: var(--header-color);
+}
+
+main {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.test-category {
+    margin-bottom: 3rem;
+}
+
+.test-category h2 {
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+    color: var(--header-color);
+}
+
+.test-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.test-entry {
+    display: contents;
+}
+
+.test-input,
+.test-output {
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.test-input {
+    background-color: var(--background-color);
+}
+
+.test-input pre {
+    margin: 0;
+    width: 100%;
+}
+
+.test-input code {
+    font-family: "SF Mono", "Fira Code", "Source Code Pro", monospace;
+    font-size: 1rem;
+    color: #d63384; /* A nice pink/purple for code */
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.test-output p {
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+@media (max-width: 768px) {
+    .test-grid {
+        grid-template-columns: 1fr;
+    }
+}

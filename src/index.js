@@ -1,98 +1,100 @@
-import {
-    Configuration
-} from 'mathjax-full/js/input/tex/Configuration.js';
-import {
-    CommandMap
-} from 'mathjax-full/js/input/tex/TokenMap.js';
-import {
-    trans,
-    transn,
-    reverseTrans,
-    detectLanguage
-} from './lib/util.js';
+import { Configuration } from 'mathjax-full/js/input/tex/Configuration.js';
+import { CommandMap } from 'mathjax-full/js/input/tex/TokenMap.js';
+import { trans, reverseTrans, detectLanguage, transn, identifiersMap } from './util.js';
+import TexParser from 'mathjax-full/js/input/tex/TexParser.js';
+import { MmlNode } from 'mathjax-full/js/core/MmlTree/MmlNode.js';
 
 const ArabicMethods = {};
 
-// \auto{...}
+function createMmlNode(parser, text, dir = '') {
+    const mml = parser.create('token', 'mtext', {}, text);
+    if (dir) {
+        mml.setAttribute('dir', dir);
+    }
+    return mml;
+}
+
+function parseAndTranslate(parser, arg, translator, dir) {
+    const translatedText = translator(arg);
+    const newParser = new TexParser(translatedText, parser.stack.env, parser.configuration);
+    newParser.parse();
+    const mml = newParser.mml();
+
+    if (mml) {
+        mml.attributes.set('dir', dir);
+    }
+    
+    parser.Push(mml);
+}
+
+// \ar{...} -> Translates content to Arabic and sets RTL direction
+ArabicMethods.ar = (parser, name) => {
+    const arg = parser.GetArgument(name);
+    parseAndTranslate(parser, arg, trans, 'rtl');
+};
+
+// \en{...} -> Translates content to English and sets LTR direction
+ArabicMethods.en = (parser, name) => {
+    const arg = parser.GetArgument(name);
+    parseAndTranslate(parser, arg, reverseTrans, 'ltr');
+};
+
+// \auto{...} -> Auto-detects language and translates to the other
 ArabicMethods.auto = (parser, name) => {
     const arg = parser.GetArgument(name);
     const lang = detectLanguage(arg);
-    const translated = lang === 'ar' ? reverseTrans(arg) : trans(parser, arg);
-    parser.string = translated + parser.string.slice(parser.i);
-    parser.i = 0;
+    if (lang === 'ar') {
+        parseAndTranslate(parser, arg, reverseTrans, 'ltr');
+    } else {
+        parseAndTranslate(parser, arg, trans, 'rtl');
+    }
 };
 
-// \ar{...}
-ArabicMethods.ar = (parser, name) => {
-    const arg = parser.GetArgument(name);
-    parser.string = trans(parser, arg) + parser.string.slice(parser.i);
-    parser.i = 0;
-};
-
-// \en{...}
-ArabicMethods.en = (parser, name) => {
-    const arg = parser.GetArgument(name);
-    parser.string = reverseTrans(arg) + parser.string.slice(parser.i);
-    parser.i = 0;
-};
-
-// \trans{...}
+// \trans{...} -> Simple text translation
 ArabicMethods.trans = (parser, name) => {
     const text = parser.GetArgument(name);
-    parser.Push(parser.create('token', 'mtext', {}, trans(parser, text)));
+    parser.Push(createMmlNode(parser, trans(text)));
 };
 
-// \transn{...}
+// \transn{...} -> Simple number translation
 ArabicMethods.transn = (parser, name) => {
     const n = parser.GetArgument(name);
-    parser.Push(parser.create('token', 'mn', {}, transn(parser, n)));
+    parser.Push(createMmlNode(parser, transn(n)));
 };
 
-// Translated macros
-const translatedMacros = {
-    'zero': ['zero', '0', 'صفر'],
-    'radius': ['radius', 'r', 'نق'],
-    'Area': ['Area', 'A', 'م'],
-    'charge': ['charge', 'C', '\\text{ڛ}']
-};
 
-function TeX(english, arabic) {
-    return (parser, name) => {
-        const isArabic = parser.options.arabic.isArabicPage();
-        const tex = isArabic ? arabic : english;
-        parser.Push(parser.create('token', 'mtext', {}, tex));
-    };
-}
-
-for (const key in translatedMacros) {
-    const [macro, english, arabic] = translatedMacros[key];
-    ArabicMethods[macro] = TeX(english, arabic);
-}
-
-new CommandMap('arabic-macros', {
-    auto: 'auto',
+const arabicMap = new CommandMap('arabic-macros', {
     ar: 'ar',
     en: 'en',
+    auto: 'auto',
     trans: 'trans',
     transn: 'transn',
-    zero: 'zero',
-    radius: 'radius',
-    Area: 'Area',
-    charge: 'charge'
+    // Add macros from old version
+    zero: ['Macro', identifiersMap.zero],
+    radius: ['Macro', identifiersMap.radius],
+    Area: ['Macro', identifiersMap.Area],
+    charge: ['Macro', identifiersMap.charge]
 }, ArabicMethods);
 
 export const ArabicConfiguration = Configuration.create('arabic-extension', {
     handler: {
         macro: ['arabic-macros']
-    },
-    options: {
-        arabic: {
-            isArabicPage: () => {
-                if (typeof document !== 'undefined') {
-                    return document.documentElement.lang === 'ar';
-                }
-                return false;
-            }
-        }
     }
 });
+
+//
+//  Make the component available to MathJax
+//
+if (typeof MathJax !== 'undefined' && MathJax.loader) {
+  MathJax.loader.ready(() => {
+    MathJax.loader.makeComponent(
+      '[custom]/arabic',
+      {
+        ready: (loader) => {
+          loader.mathjax.config.tex['arabic-extension'] = ArabicConfiguration;
+          loader.load('input/tex-base');
+        }
+      }
+    );
+  });
+}
