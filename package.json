@@ -1,32 +1,30 @@
 {
   "name": "arabic-mathjax",
-  "version": "2.1.1",
-  "description": "A docker container for developing my MathJax plugins.",
-  "main": "gulpfile.js",
+  "version": "4.0.0",
+  "description": "Arabic extension for MathJax v4",
+  "main": "dist/arabic.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "webpack",
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/OmarIthawi/arabic-mathjax.git"
+    "url": "git+https://github.com/DSYemen/arabic-mathjax.git"
   },
-  "devDependencies": {
-    "browser-sync": "^2.26.3",
-    "gulp": "^4.0.2",
-    "gulp-uglifycss": "^1.1.0",
-    "gulp-concat": "^2.6.0",
-    "gulp-order": "^1.2.0",
-    "gulp-plumber": "1.0.0",
-    "gulp-replace": "^0.5.4",
-    "gulp-uglify": "^1.2.0",
-    "run-sequence": "^1.2.1"
-  },
-  "author": "Omar Al-Ithawi <i@omardo.com>",
-  "generator": "Quench <http://quenchjs.com/>",
-  "license": "MIT",
+  "keywords": [
+    "mathjax",
+    "mathjax-extension",
+    "arabic"
+  ],
+  "author": "DSYemen",
+  "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/OmarIthawi/arabic-mathjax/issues"
+    "url": "https://github.com/DSYemen/arabic-mathjax/issues"
   },
-  "homepage": "http://www.omardo.com/arabic-mathjax/index.html",
-  "dependencies": {}
+  "homepage": "https://github.com/DSYemen/arabic-mathjax#readme",
+  "devDependencies": {
+    "mathjax-full": "^4.0.0-beta.4",
+    "webpack": "^5.76.0",
+    "webpack-cli": "^5.0.1"
+  }
 }
