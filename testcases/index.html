@@ -4,10 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Arabic MathJax - Test Cases</title>
-    
-    <link href="//fonts.googleapis.com/css?family=Amiri&amp;subset=arabic" rel="stylesheet" type="text/css">
-    <link href="//fonts.googleapis.com/earlyaccess/droidarabicnaskh.css" rel="stylesheet" type="text/css">
-    <script>
+    <script type="text/javascript">
+      var isLocalDevelopment = (location.host.indexOf('local') !== -1);
+      var isCommonHTML = (location.search.indexOf('common-html') !== -1);
+    </script>
+    <link href="https://fonts.googleapis.com/css?family=Amiri&amp;subset=arabic" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/earlyaccess/droidarabicnaskh.css" rel="stylesheet" type="text/css">
+    <!-- <script type="text/x-mathjax-config">
         window.MathJax = {
             loader: {
                 load: ['[custom]/arabic.js', 'input/tex', 'output/chtml'],
@@ -21,9 +24,62 @@
                 }
             }
         };
+    </script> -->
+
+ 
+     <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+
+ if (isLocalDevelopment) {
+          MathJax.Ajax.config.path["arabic"] = "/dist/";
+          arabicExtensionPath = "[arabic]/unpacked/arabic.js";
+      } else {
+          MathJax.Ajax.config.path["arabic"] = "../dist/";
+          arabicExtensionPath = "[arabic]/arabic.js";
+      }
+
+      var $stylesheet = $("<link rel='stylesheet' type='text/css' />")
+                          .attr('href', MathJax.Ajax.config.path["arabic"] + "/arabic.css");
+      $stylesheet.appendTo('head');
+
+      MathJax.Hub.Config({
+        showMathMenu: false,
+        TeX: {
+          extensions: [
+            "enclose.js",
+            "color.js",            
+            "AMSmath.js",
+            "AMSsymbols.js"
+          ],
+        },
+        extensions: [
+          "[arabic]/arabic.js",
+        ]
+      });
+
+      MathJax.Hub.Config({
+        'HTML-CSS': {
+          linebreaks: { automatic: true },
+          undefinedFamily: 'Amiri'
+        },
+        CommonHTML: { 
+          linebreaks: { automatic: true },
+          undefinedFamily: 'Amiri'          
+        },
+      });
+
+      MathJax.Hub.Register.MessageHook("TeX Jax - parse error",function (message) {
+        console.error(message);
+      });
+
+      MathJax.Hub.Register.MessageHook("Math Processing Error",function (message) {
+        console.error(message);
+      });
+});
     </script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
-    <link rel="stylesheet" href="style.css">
+
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body>

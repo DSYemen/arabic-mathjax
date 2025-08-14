@@ -6,7 +6,7 @@ export const identifiersMap = {
 
     // Math functions
     'sin': 'جا', 'cos': 'جتا', 'tan': 'ظا', 'cot': 'ظتا', 'sec': 'قا',
-    'csc': 'قتا', 'log': 'لو', 'lim': 'نهــا',
+    'csc': 'قتا', 'log': 'لغ','len': 'لو', 'lim': 'نهــا',
 
     // Custom commands from old version
     'Area': 'المساحة', 'radius': 'نق', 'charge': 'الشحنة', 'zero': '٠'
